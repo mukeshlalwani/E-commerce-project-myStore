@@ -1,0 +1,170 @@
+"use client";
+
+import { useState } from "react";
+import { products } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
+import Link from "next/link";
+
+const CATEGORY_MAP: Record<string, string[]> = {
+    All: [],
+    "Kitchen Tools": ["kitchen", "tool"],
+    Cookware: ["pan", "cooker", "cook"],
+    Storage: ["storage", "box"],
+    "Home Decor": ["decor", "curtain", "clock", "cover"],
+    Cleaning: ["clean", "vacuum", "mop"],
+    "Daily Essentials": ["mat", "bedsheet", "daily"],
+};
+
+export default function HomeKitchenPage() {
+    const [activeCategory, setActiveCategory] = useState("All");
+
+    const items = products.filter(p => {
+        if (p.category !== "home-kitchen") return false;
+        if (activeCategory === "All") return true;
+
+        const keywords = CATEGORY_MAP[activeCategory];
+        return keywords.some(k =>
+            p.name.toLowerCase().includes(k)
+        );
+    });
+
+    return (
+        <main className="bg-black text-white min-h-screen">
+
+            {/* ================= HERO ================= */}
+            <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center overflow-hidden">
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('/homeKitchen.jpg')" }}
+                />
+                <div className="absolute inset-0 bg-black/60" />
+
+                <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-16 ml-auto text-right">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold">
+                        Home & Kitchen
+                    </h1>
+
+                    <p className="mt-4 sm:mt-6 text-gray-300 max-w-xl ml-auto">
+                        Essentials • Decor • Daily Comfort
+                    </p>
+
+                    <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-end">
+                        <Link
+                            href="/cart"
+                            className="px-8 sm:px-10 py-4 rounded-full bg-white text-black font-semibold"
+                        >
+                            View Cart
+                        </Link>
+
+                        <Link
+                            href="/"
+                            className="px-8 sm:px-10 py-4 rounded-full border border-white font-semibold hover:bg-white hover:text-black transition"
+                        >
+                            Back to Home
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ================= CATEGORY CARDS ================= */}
+            <section className="py-14 sm:py-20 border-b border-white/10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6">
+
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-12 text-center">
+                        Shop by Category
+                    </h2>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 sm:gap-6">
+                        {Object.keys(CATEGORY_MAP).map(title => (
+                            <CategoryCard
+                                key={title}
+                                title={title}
+                                image={`/${title.toLowerCase().replace(/ /g, "-")}.jpg`}
+                                active={activeCategory === title}
+                                onClick={() => setActiveCategory(title)}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ================= PRODUCTS GRID ================= */}
+            <section className="py-16 sm:py-24 px-4 sm:px-6">
+                <div className="max-w-7xl mx-auto">
+
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-10">
+                        {activeCategory === "All"
+                            ? "Popular Home & Kitchen Products"
+                            : activeCategory}
+                    </h2>
+
+                    {items.length === 0 ? (
+                        <p className="text-center text-gray-400 text-lg">
+                            No products found in this category
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
+                            {items.map(p => (
+                                <ProductCard key={p.id} product={p} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* ================= CTA ================= */}
+            <section className="pb-16 sm:pb-24 text-center px-4">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+                    Upgrade Your Home Today 🏡
+                </h2>
+
+                <Link
+                    href="/cart"
+                    className="inline-block px-10 sm:px-12 py-4 sm:py-5 rounded-full bg-white text-black font-semibold hover:scale-105 transition"
+                >
+                    Order on WhatsApp 💬
+                </Link>
+            </section>
+        </main>
+    );
+}
+
+/* ================= CATEGORY CARD ================= */
+
+function CategoryCard({
+    title,
+    image,
+    active,
+    onClick,
+}: {
+    title: string;
+    image: string;
+    active: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                group relative h-[120px] sm:h-[140px]
+                rounded-xl overflow-hidden
+                border transition
+                ${active ? "border-white" : "border-white/10"}
+            `}
+        >
+            <img
+                src={image}
+                alt={title}
+                className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition"
+            />
+
+            <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition" />
+
+            <div className="relative z-10 h-full flex items-center justify-center px-2">
+                <span className="text-xs sm:text-sm font-semibold text-white text-center">
+                    {title}
+                </span>
+            </div>
+        </button>
+    );
+}

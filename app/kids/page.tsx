@@ -1,0 +1,137 @@
+"use client";
+
+import { useState } from "react";
+import { products } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
+import Link from "next/link";
+
+type KidsFilter =
+    | "all"
+    | "boys"
+    | "girls"
+    | "tshirts"
+    | "winter"
+    | "party";
+
+export default function KidsPage() {
+    const [filter, setFilter] = useState<KidsFilter>("all");
+
+    const kidsProducts = products.filter(p => {
+        if (p.category !== "kids") return false;
+        if (filter === "all") return true;
+        return p.subCategory === filter;
+    });
+
+    return (
+        <main className="bg-black text-white">
+
+            {/* ================= HERO ================= */}
+            <section className="relative min-h-[75vh] sm:min-h-[80vh] flex items-center overflow-hidden">
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('/kidsHome.jpg')" }}
+                />
+                <div className="absolute inset-0 bg-black/60" />
+
+                <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-16 ml-auto text-right">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight">
+                        Kids Clothing
+                    </h1>
+
+                    <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-300 max-w-xl ml-auto">
+                        Comfortable • Colorful • Everyday Fun Wear
+                    </p>
+
+                    <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-end">
+                        <Link
+                            href="/cart"
+                            className="px-8 sm:px-10 py-4 rounded-full bg-white text-black font-semibold text-center hover:scale-105 transition"
+                        >
+                            View Cart
+                        </Link>
+
+                        <Link
+                            href="/"
+                            className="px-8 sm:px-10 py-4 rounded-full border border-white font-semibold text-center hover:bg-white hover:text-black transition"
+                        >
+                            Back to Home
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ================= FILTER BAR (NOT STICKY) ================= */}
+            <section className="relative z-10 bg-black/80 backdrop-blur border-b border-white/10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex gap-3 overflow-x-auto scrollbar-hide">
+                    <FilterBadge label="All" active={filter === "all"} onClick={() => setFilter("all")} />
+                    <FilterBadge label="Boys Wear" active={filter === "boys"} onClick={() => setFilter("boys")} />
+                    <FilterBadge label="Girls Wear" active={filter === "girls"} onClick={() => setFilter("girls")} />
+                    <FilterBadge label="T-Shirts" active={filter === "tshirts"} onClick={() => setFilter("tshirts")} />
+                    <FilterBadge label="Winter Wear" active={filter === "winter"} onClick={() => setFilter("winter")} />
+                    <FilterBadge label="Party Wear" active={filter === "party"} onClick={() => setFilter("party")} />
+                </div>
+            </section>
+
+            {/* ================= PRODUCTS GRID ================= */}
+            <section className="py-16 sm:py-24 px-4 sm:px-6">
+                <div className="max-w-7xl mx-auto">
+                    {kidsProducts.length === 0 ? (
+                        <p className="text-center text-gray-400 text-lg">
+                            No products found in this category
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
+                            {kidsProducts.map(p => (
+                                <ProductCard key={p.id} product={p} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* ================= CTA ================= */}
+            <section className="pb-16 sm:pb-24 text-center px-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
+                    Cute Styles for Little Stars ✨
+                </h2>
+
+                <p className="text-gray-400 mb-8 sm:mb-10">
+                    Add items to cart and order instantly via WhatsApp
+                </p>
+
+                <Link
+                    href="/cart"
+                    className="inline-block px-10 sm:px-12 py-4 sm:py-5 rounded-full text-lg sm:text-xl font-semibold bg-white text-black hover:scale-105 transition"
+                >
+                    Order on WhatsApp 💬
+                </Link>
+            </section>
+        </main>
+    );
+}
+
+/* ================= FILTER BADGE ================= */
+
+function FilterBadge({
+    label,
+    active,
+    onClick,
+}: {
+    label: string;
+    active: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                px-5 py-2 rounded-full text-sm font-medium transition whitespace-nowrap
+                ${active
+                    ? "bg-white text-black"
+                    : "bg-[#111] text-gray-300 border border-white/10 hover:bg-white/10"}
+            `}
+        >
+            {label}
+        </button>
+    );
+}

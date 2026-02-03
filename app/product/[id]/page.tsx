@@ -1,0 +1,205 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { products } from "@/data/products";
+import { useCart } from "@/context/CartContext";
+import ProductCard from "@/components/ProductCard";
+
+export default function ProductDetailPage() {
+    const { id } = useParams();
+    const { addToCart } = useCart();
+
+    const product = products.find(p => String(p.id) === id);
+
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const [activeImage, setActiveImage] = useState(0);
+
+    // ✅ CLIENT-ONLY STATES (NO HYDRATION ISSUE)
+    const [relatedProducts, setRelatedProducts] = useState<typeof products>([]);
+    const [customersAlsoBought, setCustomersAlsoBought] = useState<typeof products>([]);
+
+    if (!product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center text-white">
+                Product not found
+            </div>
+        );
+    }
+
+    /* ================= IMAGE NORMALIZE ================= */
+    const images = Array.isArray(product.images)
+        ? product.images
+        : product.images
+            ? [product.images]
+            : product.image
+                ? [product.image]
+                : ["/placeholder.jpg"];
+
+    /* ================= SHUFFLE (CLIENT ONLY) ================= */
+    const shuffle = (arr: any[]) => [...arr].sort(() => Math.random() - 0.5);
+
+    /* ================= CLIENT SIDE RECOMMENDATIONS ================= */
+    useEffect(() => {
+        setRelatedProducts(
+            shuffle(
+                products.filter(p =>
+                    p.id !== product.id &&
+                    p.category === product.category &&
+                    p.subCategory === product.subCategory
+                )
+            ).slice(0, 6)
+        );
+
+        setCustomersAlsoBought(
+            shuffle(
+                products.filter(p =>
+                    p.id !== product.id &&
+                    p.category === product.category
+                )
+            ).slice(0, 6)
+        );
+    }, [product]);
+
+    return (
+        <main className="min-h-screen bg-black text-white px-4 sm:px-6 py-10">
+
+            {/* ================= PRODUCT SECTION ================= */}
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14">
+
+                {/* IMAGE */}
+                <div className="flex flex-col gap-4">
+                    <div className="w-full max-h-[600px] rounded-2xl bg-black flex items-center justify-center overflow-hidden">
+                        <img
+                            src={images[activeImage]}
+                            alt={product.name}
+                            className="max-h-full max-w-full object-contain"
+                        />
+                    </div>
+
+                    <div className="flex gap-3">
+                        {images.map((img, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setActiveImage(idx)}
+                                className={`h-20 w-16 rounded-xl overflow-hidden border
+                                    ${activeImage === idx
+                                        ? "border-white"
+                                        : "border-white/20"}
+                                `}
+                            >
+                                <img
+                                    src={img}
+                                    alt="thumb"
+                                    className="h-full w-full object-cover"
+                                />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* DETAILS */}
+                <div className="flex flex-col gap-6">
+                    <h1 className="text-3xl sm:text-4xl font-bold">
+                        {product.name}
+                    </h1>
+
+                    <p className="text-green-400 text-2xl font-semibold">
+                        ₹{product.price}
+                    </p>
+
+                    <p className="text-gray-400 max-w-xl">
+                        {product.description}
+                    </p>
+
+                    {/* SIZE */}
+                    {product.sizes && (
+                        <div>
+                            <p className="mb-2 text-sm">Select Size</p>
+                            <div className="flex gap-3">
+                                {product.sizes.map(size => (
+                                    <button
+                                        key={size}
+                                        onClick={() => setSelectedSize(size)}
+                                        className={`px-4 py-2 rounded-full border
+                                            ${selectedSize === size
+                                                ? "bg-white text-black"
+                                                : "border-white/30"}
+                                        `}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {!selectedSize && (
+                                <p className="text-red-500 text-xs mt-2">
+                                    Please select a size
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {/* ACTIONS */}
+                    <div className="flex gap-4 flex-wrap mt-4">
+                        <button
+                            onClick={() => {
+                                if (product.sizes && !selectedSize) return;
+                                addToCart({
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    qty: 1,
+                                    size: selectedSize ?? undefined,
+                                    images,
+                                });
+                            }}
+                            className="px-8 py-3 rounded-full bg-white text-black font-semibold"
+                        >
+                            Add to Cart
+                        </button>
+
+                        <button className="px-8 py-3 rounded-full border border-white/30">
+                            Order on WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* ================= RELATED PRODUCTS ================= */}
+            {relatedProducts.length > 0 && (
+                <section className="mt-24">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+                        Related Products
+                    </h2>
+
+                    <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
+                        {relatedProducts.map(item => (
+                            <div key={item.id} className="min-w-[220px] sm:min-w-[260px]">
+                                <ProductCard product={item} />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* ================= CUSTOMERS ALSO BOUGHT ================= */}
+            {customersAlsoBought.length > 0 && (
+                <section className="mt-24">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+                        Customers Also Bought
+                    </h2>
+
+                    <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
+                        {customersAlsoBought.map(item => (
+                            <div key={item.id} className="min-w-[220px] sm:min-w-[260px]">
+                                <ProductCard product={item} />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+        </main>
+    );
+}
