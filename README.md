@@ -1,37 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 WhatsApp E-Commerce Store (Next.js)
 
-## Getting Started
+A modern, fast, and mobile-first **WhatsApp-based E-Commerce web application** built using **Next.js App Router**, **TypeScript**, and **Tailwind CSS**.  
+Customers can browse products, apply filters, and place orders directly via **WhatsApp**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+
+### 🧩 Core Features
+- ⚡ Built with **Next.js 14 (App Router)**
+- 🧠 **TypeScript** for type safety
+- 🎨 **Tailwind CSS** for modern UI
+- 📱 Fully **responsive (mobile-first)** design
+
+### 🛍️ Product System
+- Multiple categories:
+  - Men
+  - Women
+  - Shoes
+  - Kids
+  - Home & Kitchen
+  - Watches
+- Product image slider (auto-slide)
+- Product details page
+- Clean product card UI
+
+### 🔍 Filters & Sorting
+- Category-based filters
+- Price range filter
+- Sort by price (Low → High, High → Low)
+- URL-based filters (persist on refresh)
+- Active filter chips with clear ❌ button
+- Product count badge
+
+### ⚙️ UX Enhancements
+- Smooth filter animations
+- Skeleton loaders on filter change
+- Scrollable filter bars (not fixed)
+- Clean error-free TypeScript setup
+
+### 📦 Cart & Order
+- Add to cart
+- View cart
+- Place order via **WhatsApp**
+- Lightweight cart state management
+
+---
+
+## 🧱 Tech Stack
+
+| Technology | Usage |
+|----------|------|
+| Next.js 14 | App Router & routing |
+| TypeScript | Strong typing |
+| Tailwind CSS | Styling |
+| React Hooks | State & effects |
+| WhatsApp API | Order handling |
+| Local Data | Product management |
+
+---
+
+## 📁 Project Structure
+
+```
+app/
+ ├─ page.tsx
+ ├─ men/
+ ├─ women/
+ ├─ shoes/
+ ├─ watches/
+ ├─ kids/
+ ├─ home-kitchen/
+ ├─ product/[id]/
+ ├─ cart/
+ ├─ checkout/
+components/
+ ├─ Navbar.tsx
+ ├─ Footer.tsx
+ ├─ ProductCard.tsx
+ ├─ CartItem.tsx
+context/
+ ├─ CartContext.tsx
+data/
+ ├─ products.ts
+types/
+ ├─ product.ts
+public/
+ ├─ men/
+ ├─ women/
+ ├─ shoes/
+ ├─ watches/
+ ├─ kids/
+ ├─ home-kitchen/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🖼️ Product Images
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All product images are served from the **`/public`** folder.
 
-## Learn More
+Example:
+```
+/public/shoes/s1.0.jpg
+/public/watches/watch1.jpg
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Development Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone https://github.com/your-username/whatsapp-ecommerce.git
+cd whatsapp-ecommerce
+npm install
+npm run dev
+```
 
-## Deploy on Vercel
+Open 👉 http://localhost:3000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# E-commerce-project-myStore
+## 👨‍💻 Author
+
+**Mukesh Lilawat**  
+Full-Stack Developer  
+Next.js | Java | Spring Boot | React  
+
+---
+
+⭐ Star this repo if you find it useful!
