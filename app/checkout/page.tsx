@@ -30,28 +30,51 @@ export default function Checkout() {
 
     const total = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
 
-    /* ================= PDF ================= */
+    /* ================= MODERN PDF ================= */
 
     const doc = new jsPDF();
 
-    doc.setFontSize(18);
-    doc.text("DKS HANDLOOM", 20, 20);
+    // HEADER BAR
+    doc.setFillColor(34, 197, 94); // green
+    doc.rect(0, 0, 210, 30, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text("DKS HANDLOOM", 20, 18);
+
+    doc.setTextColor(0, 0, 0);
+
+    // ORDER INFO BOX
+    doc.setDrawColor(220);
+    doc.roundedRect(15, 40, 180, 35, 3, 3);
 
     doc.setFontSize(12);
-    doc.text(`Order Number: ${orderNumber}`, 20, 40);
-    doc.text(`Date & Time: ${dateTime}`, 20, 50);
+    doc.text(`Order Number: ${orderNumber}`, 20, 55);
+    doc.text(`Date & Time: ${dateTime}`, 20, 65);
 
-    doc.text(`Name: ${name}`, 20, 65);
-    doc.text(`Phone: ${phone}`, 20, 75);
-    doc.text(`Email: ${email || "N/A"}`, 20, 85);
+    // CUSTOMER SECTION
+    doc.setFontSize(14);
+    doc.text("Customer Details", 15, 90);
 
-    doc.text("Address:", 20, 100);
-    doc.text(String(address), 20, 110);
+    doc.setFontSize(12);
+    doc.text(`Name: ${name}`, 20, 105);
+    doc.text(`Phone: ${phone}`, 20, 115);
+    doc.text(`Email: ${email || "N/A"}`, 20, 125);
 
-    doc.text("Items:", 20, 130);
-    doc.text(items, 20, 140);
+    doc.text("Address:", 20, 140);
+    doc.text(String(address), 20, 150);
 
-    doc.text(`Total: ₹${total}`, 20, 170);
+    // ITEMS SECTION
+    doc.setFontSize(14);
+    doc.text("Order Items", 15, 170);
+
+    doc.setFontSize(12);
+    doc.text(items, 20, 185);
+
+    // TOTAL
+    doc.setFontSize(16);
+    doc.setTextColor(34, 197, 94);
+    doc.text(`Total: ₹${total}`, 150, 270);
 
     doc.save(`order-${orderNumber}.pdf`);
 
