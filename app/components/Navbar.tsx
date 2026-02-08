@@ -92,7 +92,7 @@ export default function Navbar() {
 
                 {/* LOGO */}
                 <Link href="/" className="text-xl font-semibold text-gray-900">
-                    MyStore
+                    DKSHANDLOOM
                 </Link>
 
                 {/* ================= SEARCH (DESKTOP) ================= */}

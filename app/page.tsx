@@ -14,7 +14,7 @@ import ProductCard from "@/components/ProductCard";
 
 const heroSlides = [
   {
-    image: "/hero/men.png",
+    image: "/hero/DKS.jpg",
     title: "Men's Fashion",
     subtitle: "Premium styles for everyday confidence",
     cta: "Shop Men",
