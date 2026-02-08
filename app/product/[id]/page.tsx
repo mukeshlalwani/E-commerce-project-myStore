@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { products } from "@/data/products";
+import { getProducts } from "@/data/products";
+import type { Product } from "@/types/product";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import Image from "next/image";
@@ -13,13 +14,49 @@ export default function ProductDetailPage() {
 
     const { addToCart } = useCart();
 
-    const product = products.find(p => String(p.id) === id);
-
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [activeImage, setActiveImage] = useState(0);
 
-    const [relatedProducts, setRelatedProducts] = useState<typeof products>([]);
-    const [customersAlsoBought, setCustomersAlsoBought] = useState<typeof products>([]);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+    const [customersAlsoBought, setCustomersAlsoBought] = useState<Product[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        void getProducts().then((data) => {
+            if (!mounted) return;
+            const items = data ?? [];
+            setAllProducts(items);
+        });
+        return () => { mounted = false; };
+    }, []);
+
+    const product = allProducts.find((p) => String(p.id) === id);
+    const shuffle = <T,>(arr: T[]) => [...arr].sort(() => Math.random() - 0.5);
+
+    /* ================= RECOMMENDATIONS ================= */
+    useEffect(() => {
+        if (!product) return;
+
+        setRelatedProducts(
+            shuffle(
+                allProducts.filter((p) =>
+                    p.id !== product.id &&
+                    p.category === product.category &&
+                    p.subCategory === product.subCategory
+                )
+            ).slice(0, 6)
+        );
+
+        setCustomersAlsoBought(
+            shuffle(
+                allProducts.filter((p) =>
+                    p.id !== product.id &&
+                    p.category === product.category
+                )
+            ).slice(0, 6)
+        );
+    }, [product, allProducts]);
 
     if (!product) {
         return (
@@ -38,31 +75,6 @@ export default function ProductDetailPage() {
                 ? [product.image]
                 : ["/placeholder.jpg"];
 
-    /* ================= SHUFFLE ================= */
-    const shuffle = <T,>(arr: T[]) => [...arr].sort(() => Math.random() - 0.5);
-
-    /* ================= RECOMMENDATIONS ================= */
-    useEffect(() => {
-        setRelatedProducts(
-            shuffle(
-                products.filter(p =>
-                    p.id !== product.id &&
-                    p.category === product.category &&
-                    p.subCategory === product.subCategory
-                )
-            ).slice(0, 6)
-        );
-
-        setCustomersAlsoBought(
-            shuffle(
-                products.filter(p =>
-                    p.id !== product.id &&
-                    p.category === product.category
-                )
-            ).slice(0, 6)
-        );
-    }, [product]);
-
     return (
         <main className="min-h-screen bg-gray-50 text-gray-900 px-4 sm:px-6 py-12">
 
@@ -75,9 +87,9 @@ export default function ProductDetailPage() {
                             src={images[activeImage]}
                             alt={product.name}
                             fill
-                            priority
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-contain"
+                            className="object-cover"
+                            priority
                         />
                     </div>
 
